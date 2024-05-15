@@ -1,16 +1,7 @@
-
-function setTimer() {
-
-}
-
-function start() {
-  
-}
-
-function pause() {
+function getTimeLeft() {
 
 }
 
-function reset() {
+function getTimeLeft() {
   
 }
