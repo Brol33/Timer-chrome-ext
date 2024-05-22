@@ -7,6 +7,10 @@
     "default_popup": "popup.html"
   },
   "background": {
-    "service-worker": "background.js"
-  }
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "background",
+    "offscreen"
+  ]
 }

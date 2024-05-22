@@ -3,7 +3,6 @@ var startDate;
 var ringDate;
 var pauseDate;
 var timeLeft;
-var alarmSound = new Audio("Alarm01.wav");
 
 function setTimer(durationMs) {
   timerDuration = durationMs;
@@ -17,7 +16,7 @@ function startTimer(durationMs) {
 
   ringDate.setHours(ringDate.getHours() + DurHours);
   ringDate.setMinutes(ringDate.getMinutes() + DurMinutes);
-  ringDate.setSeconds(ring.getSeconds() + DurSeconds);
+  ringDate.setSeconds(ringDate.getSeconds() + DurSeconds);
 
   startDate = new Date();
   timeLeft = setTimeout(ring, ringDate - startDate)
@@ -28,8 +27,18 @@ function startTimer(durationMs) {
 function updateDisplayTimer() {
 }
 
-function ring() {
-  alarmSound.play();
+async function ring(source = "Alarm01.wav", volume = 1) {
+  await createOffScreen();
+  await chrome.runtime.sendMessage({ play: {source, volume}})
+}
+
+async function createOffScreen() {
+  if (await chrome.offscreen.hasDocument()) return;
+  await chrome.offscreen.createDocument({
+    url: "offscreen.html",
+    reasons: ['AUDIO_PLAYBACK'],
+    justification: "testing"
+  });
 }
 
 function getTimeLeft() {
@@ -47,3 +56,19 @@ function reset() {
 function backgroundFunction () {
   return "hello from the background!"
 }
+
+// Listen for messages from popup.js
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    switch (request.action) {
+      case "start":
+        startTimer(request.duration);
+        sendResponse({message:"started timer"});
+        break;
+      case "pause":
+        pause()
+        break;
+      
+    }
+  }
+);
