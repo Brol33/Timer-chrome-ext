@@ -2,13 +2,16 @@ var timerDuration;
 var startDate;
 var ringDate;
 var pauseDate;
+var timerId;
 var timeLeft;
+var intervalId;
 
 function setTimer(durationMs) {
   timerDuration = durationMs;
 }
 
 function startTimer(durationMs) {
+  // when start is clicked multiple times, it starts multiple timers. fix this
   ringDate = new Date();
   var DurSeconds = parseInt((durationMs / 1000) % 60);
   var DurMinutes = parseInt((durationMs / (1000 * 60)) % 60);
@@ -19,12 +22,42 @@ function startTimer(durationMs) {
   ringDate.setSeconds(ringDate.getSeconds() + DurSeconds);
 
   startDate = new Date();
-  timeLeft = setTimeout(ring, ringDate - startDate)
-
-  //setInterval(updateDisplayTimer, 1000);
+  timerId = setTimeout(ring, ringDate - startDate)
+  intervalId = setInterval(function() {
+    let currentTimeLeft = ringDate.getTime() - Date.now()
+    if (currentTimeLeft < 0) {
+      clearInterval(intervalId)
+    } else {
+      updateDisplayTimer(currentTimeLeft);
+    }
+  }, 1000);
 }
 
-function updateDisplayTimer() {
+function updateDisplayTimer(currentTime) {
+  console.log("sending updatedisplay");
+  chrome.runtime.sendMessage({ action: "updateDisplay", time: currentTime});
+}
+
+function getTimeLeft() {
+  
+}
+
+function pause() {
+  pauseDate = new Date();
+  clearTimeout(timerId);
+}
+
+function reset() {
+
+}
+
+function resume() {
+  timerDuration = ringDate.getTime() - pauseDate.getTime();
+  startTimer(timerDuration);
+}
+
+function backgroundFunction () {
+  return "hello from the background!"
 }
 
 async function ring(source = "Alarm01.wav", volume = 1) {
@@ -37,24 +70,8 @@ async function createOffScreen() {
   await chrome.offscreen.createDocument({
     url: "offscreen.html",
     reasons: ['AUDIO_PLAYBACK'],
-    justification: "testing"
+    justification: "ringAlarm"
   });
-}
-
-function getTimeLeft() {
-  return timerDuration
-}
-
-function pause() {
-
-}
-
-function reset() {
-  
-}
-
-function backgroundFunction () {
-  return "hello from the background!"
 }
 
 // Listen for messages from popup.js
@@ -68,6 +85,10 @@ chrome.runtime.onMessage.addListener(
       case "pause":
         pause()
         break;
+      case "reset":
+        reset()
+        break;
+      
       
     }
   }
