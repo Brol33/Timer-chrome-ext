@@ -25,17 +25,28 @@ function startTimer(durationMs) {
   timerId = setTimeout(ring, ringDate - startDate)
   intervalId = setInterval(function() {
     let currentTimeLeft = ringDate.getTime() - Date.now()
+    updateDisplayTimer(currentTimeLeft);
     if (currentTimeLeft < 0) {
       clearInterval(intervalId)
-    } else {
-      updateDisplayTimer(currentTimeLeft);
-    }
+    } 
+    
+    
   }, 1000);
 }
 
 function updateDisplayTimer(currentTime) {
+  let totalSeconds = Math.ceil(currentTime / 1000);
+  let seconds = totalSeconds % 60;
+  let minutes = Math.floor(totalSeconds / 60) % 60;
+  let hours = Math.floor(totalSeconds / 3600) % 60;
+  console.log(seconds)
+  console.log(minutes)
+  seconds = seconds < 10 ? "0" + seconds : seconds;
+  minutes = minutes < 10 ? "0" + minutes : minutes;
+  hours = hours < 10 ? "0" + hours : hours;
+
   console.log("sending updatedisplay");
-  chrome.runtime.sendMessage({ action: "updateDisplay", time: currentTime});
+  chrome.runtime.sendMessage({ action: "updateDisplay", time: `${hours}:${minutes}:${seconds}` });
 }
 
 function getTimeLeft() {
@@ -45,6 +56,9 @@ function getTimeLeft() {
 function pause() {
   pauseDate = new Date();
   clearTimeout(timerId);
+  clearInterval(intervalId);
+  timerId = null;
+  intervalId = null;
 }
 
 function reset() {
@@ -53,6 +67,8 @@ function reset() {
 
 function resume() {
   timerDuration = ringDate.getTime() - pauseDate.getTime();
+  console.log(timerDuration);
+  console.log("resume");
   startTimer(timerDuration);
 }
 
@@ -82,11 +98,14 @@ chrome.runtime.onMessage.addListener(
         startTimer(request.duration);
         sendResponse({message:"started timer"});
         break;
+      case "resume":
+        resume();
+        break;
       case "pause":
-        pause()
+        pause();
         break;
       case "reset":
-        reset()
+        reset();
         break;
       
       

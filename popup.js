@@ -1,17 +1,21 @@
 
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById("start").addEventListener("click", start);
-  document.getElementById("resume").addEventListener("click", start);
-  document.getElementById("pause").addEventListener("click", start);
-  document.getElementById("reset").addEventListener("click", start);
+  document.getElementById("resume").addEventListener("click", resume);
+  document.getElementById("pause").addEventListener("click", pause);
+  document.getElementById("reset").addEventListener("click", reset);
+  document.getElementById("setting").addEventListener("click", start);
 });
 
-function start() {
-  console.log("sending message to background start")
-  chrome.runtime.sendMessage({ action: "start", duration: "3000" }, function(response) {
+function start() {  console.log("sending message to background start")
+  chrome.runtime.sendMessage({ action: "start", duration: "6000" }, function(response) {
     console.log(response.message);
   });
 };
+
+function resume() {
+  chrome.runtime.sendMessage({ action: "resume" });
+}
 
 function pause() {
   chrome.runtime.sendMessage({ action: "pause" });
@@ -22,19 +26,7 @@ function reset() {
 }
 
 function updateDisplay(remainingTime) {
-  let seconds = Math.ceil(remainingTime / 1000);
-  let minutes = Math.floor(remainingTime / (1000 * 60));
-  let hours = Math.floor(remainingTime / (1000 * 60 * 60));
-  console.log("time")
-  console.log(remainingTime)
-  console.log(seconds)
-  console.log(minutes)
-  console.log(hours)
-  console.log("time")
-  if (seconds < 10) {
-    
-  }
-  document.getElementById("timerDisplay").textContent = 
+  document.getElementById("timerDisplay").textContent = remainingTime;
 }
 
 chrome.runtime.onMessage.addListener(
