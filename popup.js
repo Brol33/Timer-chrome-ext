@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById("resume").addEventListener("click", resume);
   document.getElementById("pause").addEventListener("click", pause);
   document.getElementById("reset").addEventListener("click", reset);
-  document.getElementById("setting").addEventListener("click", start);
+  document.getElementById("setting").addEventListener("click", goToSettings);
 });
 
 function start() {  console.log("sending message to background start")
@@ -29,6 +29,25 @@ function updateDisplay(remainingTime) {
   document.getElementById("timerDisplay").textContent = remainingTime;
 }
 
+function goToSettings() {
+  document.getElementById("start").style.display = "none";
+  document.getElementById("resume").style.display = "none";
+  document.getElementById("pause").style.display = "none";
+  document.getElementById("reset").style.display = "none";
+  document.getElementById("setting").style.display = "none";
+  document.getElementById("save").style.display = "inline";
+  document.getElementById("newTime").style.display = "inline";
+}
+
+function save() {
+  document.getElementById("start").style.display = "none";
+  document.getElementById("resume").style.display = "none";
+  document.getElementById("pause").style.display = "none";
+  document.getElementById("reset").style.display = "none";
+  document.getElementById("setting").style.display = "none";
+  document.getElementById("save").style.display = "inline";
+  document.getElementById("newTime").style.display = "inline";
+}
 chrome.runtime.onMessage.addListener(
   function(message, sender, sendResponse) {
     if (message.action === "updateDisplay") {

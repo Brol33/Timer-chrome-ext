@@ -29,8 +29,6 @@ function startTimer(durationMs) {
     if (currentTimeLeft < 0) {
       clearInterval(intervalId)
     } 
-    
-    
   }, 1000);
 }
 
