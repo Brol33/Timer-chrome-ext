@@ -5,6 +5,14 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById("pause").addEventListener("click", pause);
   document.getElementById("reset").addEventListener("click", reset);
   document.getElementById("setting").addEventListener("click", goToSettings);
+  document.getElementById("save").addEventListener("click", save);
+  document.getElementById("newTime").addEventListener("keyup", function(event) {
+    event.preventDefault();
+    console.log(event.key);
+    if (event.key === "Enter") {
+      document.getElementById("save").click();
+    }
+  });
 });
 
 function start() {  console.log("sending message to background start")
@@ -30,6 +38,7 @@ function updateDisplay(remainingTime) {
 }
 
 function goToSettings() {
+  document.getElementById("timerDisplay").style.display = "none";
   document.getElementById("start").style.display = "none";
   document.getElementById("resume").style.display = "none";
   document.getElementById("pause").style.display = "none";
@@ -40,14 +49,19 @@ function goToSettings() {
 }
 
 function save() {
-  document.getElementById("start").style.display = "none";
-  document.getElementById("resume").style.display = "none";
-  document.getElementById("pause").style.display = "none";
-  document.getElementById("reset").style.display = "none";
-  document.getElementById("setting").style.display = "none";
-  document.getElementById("save").style.display = "inline";
-  document.getElementById("newTime").style.display = "inline";
+  let newDuration = document.getElementById("newTime").value;
+  // send newduration to background.js and change timer
+  console.log(newDuration);
+  document.getElementById("timerDisplay").style.display = "inline";
+  document.getElementById("start").style.display = "inline";
+  document.getElementById("resume").style.display = "inline";
+  document.getElementById("pause").style.display = "inline";
+  document.getElementById("reset").style.display = "inline";
+  document.getElementById("setting").style.display = "inline";
+  document.getElementById("save").style.display = "none";
+  document.getElementById("newTime").style.display = "none";
 }
+
 chrome.runtime.onMessage.addListener(
   function(message, sender, sendResponse) {
     if (message.action === "updateDisplay") {
