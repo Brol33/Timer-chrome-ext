@@ -15,8 +15,8 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
-function start() {  console.log("sending message to background start")
-  chrome.runtime.sendMessage({ action: "start", duration: "6000" }, function(response) {
+function start() {  
+  chrome.runtime.sendMessage({ action: "start" }, function(response) {
     console.log(response.message);
   });
 };
@@ -50,8 +50,8 @@ function goToSettings() {
 
 function save() {
   let newDuration = document.getElementById("newTime").value;
-  // send newduration to background.js and change timer
-  console.log(newDuration);
+  chrome.runtime.sendMessage({ action: "changeTimer", duration: newDuration });
+  
   document.getElementById("timerDisplay").style.display = "inline";
   document.getElementById("start").style.display = "inline";
   document.getElementById("resume").style.display = "inline";
@@ -64,10 +64,11 @@ function save() {
 
 chrome.runtime.onMessage.addListener(
   function(message, sender, sendResponse) {
-    if (message.action === "updateDisplay") {
-      console.log("received updateDisplay");
-      console.log(message.time);
-      updateDisplay(message.time);
+    switch (message.action) {
+      case "updateDisplay":
+        console.log("received updateDisplay");
+        console.log(message.time);
+        updateDisplay(message.time);
     }
   }
 )

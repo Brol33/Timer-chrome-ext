@@ -1,13 +1,13 @@
-var timerDuration;
+var timerDuration = 1500000;
 var startDate;
 var ringDate;
 var pauseDate;
 var timerId;
-var timeLeft;
+var durationLeft;
 var intervalId;
 
-function setTimer(durationMs) {
-  timerDuration = durationMs;
+function setTimer(duration) {
+  timerDuration = parseInt(duration) * 60 * 1000;
 }
 
 function startTimer(durationMs) {
@@ -52,6 +52,7 @@ function getTimeLeft() {
 }
 
 function pause() {
+  // when pause is clicked, change start button to resume button
   pauseDate = new Date();
   clearTimeout(timerId);
   clearInterval(intervalId);
@@ -60,14 +61,18 @@ function pause() {
 }
 
 function reset() {
-
+  clearTimeout(timerId);
+  clearInterval(intervalId);
+  timerId = null;
+  intervalId = null;
+  updateDisplayTimer(timerDuration);
 }
 
 function resume() {
-  timerDuration = ringDate.getTime() - pauseDate.getTime();
-  console.log(timerDuration);
+  durationLeft = ringDate.getTime() - pauseDate.getTime();
+  console.log(durationLeft);
   console.log("resume");
-  startTimer(timerDuration);
+  startTimer(durationLeft);
 }
 
 function backgroundFunction () {
@@ -93,7 +98,7 @@ chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
     switch (request.action) {
       case "start":
-        startTimer(request.duration);
+        startTimer(timerDuration);
         sendResponse({message:"started timer"});
         break;
       case "resume":
@@ -105,7 +110,10 @@ chrome.runtime.onMessage.addListener(
       case "reset":
         reset();
         break;
-      
+      case "changeTimer":
+        setTimer(request.duration);
+        updateDisplayTimer(timerDuration);
+        break;
       
     }
   }
