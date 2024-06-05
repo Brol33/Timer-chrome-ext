@@ -15,6 +15,20 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
+chrome.runtime.onMessage.addListener(
+  // change switch to if, if theres only 1 case
+  function(message, sender, sendResponse) {
+    switch (message.action) {
+      case "updateDisplay":
+        console.log("received updateDisplay");
+        console.log(message.time);
+        updateDisplay(message.time);
+        break;
+    }
+  }
+)
+
+//display resume when start is pressed and vice versa
 function start() {  
   chrome.runtime.sendMessage({ action: "start" }, function(response) {
     console.log(response.message);
@@ -38,37 +52,24 @@ function updateDisplay(remainingTime) {
 }
 
 function goToSettings() {
-  document.getElementById("timerDisplay").style.display = "none";
-  document.getElementById("start").style.display = "none";
-  document.getElementById("resume").style.display = "none";
-  document.getElementById("pause").style.display = "none";
-  document.getElementById("reset").style.display = "none";
-  document.getElementById("setting").style.display = "none";
-  document.getElementById("save").style.display = "inline";
-  document.getElementById("newTime").style.display = "inline";
+  toggleElementVisibility("timerDisplay", false);
+  toggleElementsVisibility(["start", "resume", "pause", "reset", "setting"], false);
+  toggleElementsVisibility(["newTime", "save"], true);
 }
 
 function save() {
   let newDuration = document.getElementById("newTime").value;
   chrome.runtime.sendMessage({ action: "changeTimer", duration: newDuration });
-  
-  document.getElementById("timerDisplay").style.display = "inline";
-  document.getElementById("start").style.display = "inline";
-  document.getElementById("resume").style.display = "inline";
-  document.getElementById("pause").style.display = "inline";
-  document.getElementById("reset").style.display = "inline";
-  document.getElementById("setting").style.display = "inline";
-  document.getElementById("save").style.display = "none";
-  document.getElementById("newTime").style.display = "none";
+  toggleElementVisibility("timerDisplay", true);
+  toggleElementsVisibility(["start", "resume", "pause", "reset", "setting"], true);
+  toggleElementsVisibility(["save", "newTime"], false);
 }
 
-chrome.runtime.onMessage.addListener(
-  function(message, sender, sendResponse) {
-    switch (message.action) {
-      case "updateDisplay":
-        console.log("received updateDisplay");
-        console.log(message.time);
-        updateDisplay(message.time);
-    }
-  }
-)
+function toggleElementVisibility(elementId, visible) {
+  document.getElementById(elementId).style.display = visible ? "inline" : "none";
+}
+
+function toggleElementsVisibility(elementIds, visible) {
+  elementIds.array.forEach(id => toggleElementVisibility(id, visible));
+}
+

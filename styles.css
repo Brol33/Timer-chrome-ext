@@ -1,0 +1,22 @@
+body {
+}
+
+button {
+  display: flex;
+  padding: 2px;
+}
+
+#main-buttons {
+  display: flex;
+}
+
+#timerDisplay {
+  font-size: 40px;
+}
+
+#setting-div {
+  display: flex;
+  justify-content: flex-end;
+  color: aqua;
+}
+

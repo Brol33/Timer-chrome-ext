@@ -2,17 +2,26 @@
 <html lang="en">
 
 <head>
-<script src="popup.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <title>Timer</title>
+  <script src="popup.js" defer></script>
+  
 </head>
 <body>
-  <div id="timerDisplay">00:25:00</div>
-  <div>
+  <div id="setting-div">
     <button id="setting" type="button">Settings</button>
   </div>
-  <button id="start" type="button">Start</button>
-  <button id="pause" type="button">Pause</button>
-  <button id="reset" type="button">Reset</button>
-  <button id="resume" type="button">Resume</button>
+  <div id="timerDisplay">00:25:00</div>
+  <div id="main-buttons">
+    <button id="start" type="button">Start</button>
+    <button id="resume" type="button">Resume</button>
+    <button id="pause" type="button">Pause</button>
+    <button id="reset" type="button">Reset</button>
+    
+  </div>
+  
 
   <input id="newTime" type="text" style="display: none;">
   <button id="save" type="button" style="display: none;">Save</button>
