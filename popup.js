@@ -1,4 +1,6 @@
-
+// to-do:
+// start timer and close popup, when you reopen it briefly shows original duration
+// Fix it so it doesnt show original duration
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById("start").addEventListener("click", start);
   document.getElementById("resume").addEventListener("click", resume);
@@ -33,14 +35,19 @@ function start() {
   chrome.runtime.sendMessage({ action: "start" }, function(response) {
     console.log(response.message);
   });
+
 };
 
 function resume() {
   chrome.runtime.sendMessage({ action: "resume" });
+  document.getElementById("resume").style.display = "none";
+  document.getElementById("pause").style.display = "inline";
 }
 
 function pause() {
   chrome.runtime.sendMessage({ action: "pause" });
+  document.getElementById("resume").style.display = "inline";
+  document.getElementById("pause").style.display = "none";
 }
 
 function reset() {
@@ -53,8 +60,8 @@ function updateDisplay(remainingTime) {
 
 function goToSettings() {
   toggleElementVisibility("timerDisplay", false);
-  toggleElementsVisibility(["start", "resume", "pause", "reset", "setting"], false);
   toggleElementsVisibility(["newTime", "save"], true);
+  toggleElementsVisibility(["start", "resume", "pause", "reset", "setting"], false);
 }
 
 function save() {
@@ -70,6 +77,6 @@ function toggleElementVisibility(elementId, visible) {
 }
 
 function toggleElementsVisibility(elementIds, visible) {
-  elementIds.array.forEach(id => toggleElementVisibility(id, visible));
+  elementIds.forEach(id => toggleElementVisibility(id, visible));
 }
 
